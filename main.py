@@ -1,26 +1,52 @@
-import secrets
 import string
+import random
 
-uppercase_letters = string.ascii_uppercase
-lowercase_letters = string.ascii_lowercase
-numbers = string.digits
-special_characters = string.punctuation
+# check is the value is integer or recall the action from user
+def is_integer(input):
+    try:
+        val = int(input())
+        return val
+    except ValueError:
+        print("Input is not an integer. Try one more time.")
+        return is_integer(input)
 
-password = []
+# check is the value is integer and it is in the valid range or recall the action from user
+def is_value_in_limit(input):
+    val = is_integer(input)
 
-password.append(secrets.choice(uppercase_letters))
-password.append(secrets.choice(lowercase_letters))
-password.append(secrets.choice(numbers))
-password.append(secrets.choice(special_characters))
+    if 4 <= val <= 12:
+        return val
+    else:
+        print("Value - " + str(val) + " is out from the range (4 - 12 symbols). Try one more time.");
+        return is_value_in_limit(input)
 
-length = int(input('\nEnter the length of password: '))
+# generate password with setted length
+def passord_generator(size):
+    chars = string.ascii_uppercase + string.ascii_lowercase + string.digits + string.punctuation;
 
-character_set = uppercase_letters + lowercase_letters + numbers + special_characters
-for _ in range(length - 4):
-    password.append(secrets.choice(character_set))
+    # password has at least one uppercase letter, one lowercase letter, one digit, one symbol
+    password_array = [
+     random.choice(string.ascii_uppercase),
+     random.choice(string.ascii_lowercase),
+     random.choice(string.digits),
+     random.choice(string.punctuation),
+    ]
 
-secrets.SystemRandom().shuffle(password)
+    # add random characters if inputed length more than 4
+    for _ in range(size - len(password_array)):
+        password_array.append(random.choice(chars))
 
-generated_password = ''.join(password)
+    # randomize order of characters
+    random.shuffle(password_array)
+    return ''.join(password_array)
 
-print("Your password is ", generated_password)
+# get password length from user
+def input_password_length():
+    return input("Please enter the desired password length: ")
+
+def init():
+    print("Welcome to the Linux User Password Generator!")
+    password_length = is_value_in_limit(input_password_length)
+    print(passord_generator(password_length))
+
+init()
